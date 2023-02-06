@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+
+#infoContainer{
+    display: flex;
+    flex-direction: row;
+    margin: 4%;
+    justify-content: space-around;
+}
+
+.infos{    
+    border-radius: 15px;
+}
+
+.infos > p{
+    margin: 7%;
+    font-family: 'Roboto', sans-serif;
+    color: #615ffb;
+}
