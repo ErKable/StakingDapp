@@ -1,6 +1,7 @@
 import "../css/UserInfo.css"
 import LoadingNumber from "./LoadingNumber";
 import Countdown from "./Countdown";
+import { Button } from "@nextui-org/react";
 
 function UserInfo(){
 
@@ -15,9 +16,9 @@ function UserInfo(){
 
             <div id="buttonContainer">
                 <div id="deposit" className="interaction">
-                    <p>STAKE TOKENS</p>
-                    <input type="text" placeholder="Amount"/>
-                    <button>APPROVE/DEPOSIT</button>
+                    <p>...</p>
+                    <Button auto color="gradient" rounded bordered shadow css={{width: "150px"}}>CLAIM</Button>
+                    <Button auto color="gradient" rounded bordered shadow css={{width: "150px"}}>WITHDRAW</Button>
                 </div>
                 <div id="withdraw" className="interaction"><p>WITHDRAW TOKENS</p>
                 <p><Countdown UNIX_timestamp={1694013165}/></p></div>
