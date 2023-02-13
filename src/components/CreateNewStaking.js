@@ -30,10 +30,10 @@ function CreateNewStaking({factoryAddress}){
         setTiers(Number(factoTiers))
     }
 
-    function getSelectedTier(tierLv){
+/*     function getSelectedTier(tierLv){
         setSelectedTier(tierLv)
         console.log('getSelectedTier', selectedTier)
-    }
+    } */
 
     for(let i = 0; i < tiers+1; i++){
         tiersArray[i] = i+1;
@@ -49,8 +49,8 @@ function CreateNewStaking({factoryAddress}){
             <div id="userSelect">
 
             <Dropdown color="secondary">
-                <Dropdown.Button flat>SELECT TIER</Dropdown.Button>
-                <Dropdown.Menu  onAction={(tierId) => {
+                <Dropdown.Button color='gradient' rounded bordered shadow flat>SELECT TIER</Dropdown.Button>
+                <Dropdown.Menu selectionMode='single' onAction={(tierId) => {
                     console.log(`onAction tierId value = ${tierId-1}`)
                     //getSelectedTier(tierId-1)
                     console.log(`onAction selectedTier before: ${selectedTier}`)
