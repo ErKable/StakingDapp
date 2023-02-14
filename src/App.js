@@ -8,10 +8,10 @@ import { NextUIProvider } from '@nextui-org/react';
 import { createTheme } from "@nextui-org/react"
 import { ConnectButton} from './components';
 import { StakedUserView, NewUserView } from './views';
-import {useState, useEffect} from "react"
+import { useState, useEffect } from "react"
 import { Web3Modal } from "@web3modal/react";
 import { configureChains, createClient, WagmiConfig } from "wagmi";
-import { getAccount } from '@wagmi/core'
+import { getAccount, fetchSigner } from '@wagmi/core'
 import {bsc, bscTestnet} from "wagmi/chains";
 
 
@@ -43,18 +43,25 @@ const darkTheme = createTheme({
 
 
 function App() {
+  const [call, setCall] = useState(true)
+  const [userSigner, setUserSigner] = useState()
   const [connectedAccount, setConnectedAccount] = useState()
   const [connectedAddress, setConnectedAddress] = useState()
   const [address, setAddress] = useState(true)
   const tokenAddress = " 0x1bd5138277734c20b88C24955CfFf0660f964216"
   const stakeFactoryAddress = "0x06280B430BAFB859D3a764eEe593A08b8377579d"
   
-  useEffect(() => {    
+  useEffect(() => { 
+    if(call){   
       getConnectedAccount()   
-    if(connectedAccount){   
-      console.log(connectedAccount)
-      getConnectedAddress()
-      console.log(connectedAddress)
+        if(connectedAccount){   
+        console.log(connectedAccount)
+        getConnectedAddress()
+        if(connectedAddress && !userSigner){
+        console.log(connectedAddress)
+        getSigner()
+        }
+      }
     }
   })
 
@@ -72,6 +79,12 @@ function App() {
   function getConnectedAddress(){
     let accAdd = connectedAccount.address
     setConnectedAddress(accAdd)
+  }
+
+  async function getSigner(){
+    let signer = await fetchSigner()
+    console.log('signer',signer)
+    setUserSigner(signer)
   }
 
   if(address){
@@ -101,7 +114,7 @@ function App() {
         <Web3Modal projectId={process.env.REACT_APP_WALLETCONNET_ID} ethereumClient={ethereumClient} />
           <div><ConnectButton /></div>
           <button onClick={() => setView()}>Change View</button>
-          <NewUserView factoryAddress={stakeFactoryAddress}/>
+          <NewUserView factoryAddress={stakeFactoryAddress} userSigner={userSigner}/>
         </WagmiConfig>
   
         <Web3Modal
