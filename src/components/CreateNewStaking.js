@@ -2,12 +2,12 @@ import { useEffect, useState } from "react"
 import TierDropDown from "./TierDropDown"
 import Countdown from "./Countdown";
 import "../css/CreateNewStaking.css";
-import { Input, Button, Dropdown } from '@nextui-org/react';
+import { Input, Button, Dropdown, Card, Text } from '@nextui-org/react';
 import { ethers } from "ethers";
 import { Notyf } from "notyf";
 import "notyf/notyf.min.css";
 
-function CreateNewStaking({factoryAddress, userSigner}){
+function CreateNewStaking({factoryAddress, tokenAddress, userSigner}){
 
     const[amountToDeposit, setAmountToDeposit] = useState()
     const[amountToStake, setAmountToStake] = useState()
@@ -15,6 +15,7 @@ function CreateNewStaking({factoryAddress, userSigner}){
     const[selectedTier, setSelectedTier] = useState(0)
     const[apyInfo, setApyInfo] = useState()
     const[tiers, setTiers] = useState()
+    const tokenAbi = require('../abi/erc20Abu.json')
     const factoryAbi = require('../abi/stakingFactory.json')
     const RPC = "https://data-seed-prebsc-1-s3.binance.org:8545/";
     const provider = new ethers.providers.JsonRpcProvider(RPC);
@@ -98,6 +99,10 @@ function CreateNewStaking({factoryAddress, userSigner}){
             notyf.error("Stake more, poor boy")
         } else {
             console.log('HEYYY', userSigner)
+            const token = new ethers.Contract(tokenAddress, tokenAbi, userSigner)
+            let approve = await token.approve(factoryAddress, (amountToDeposit * 10 ** 9).toString())
+            await approve.wait()
+            notyf.success('token approved')  
             const factory = new ethers.Contract(factoryAddress, factoryAbi, userSigner)
             let deposit = await factory.createStaking(amountToDeposit, selectedTier)
             await deposit.wait()
@@ -112,12 +117,28 @@ function CreateNewStaking({factoryAddress, userSigner}){
 
 
     return(
-        <div id="newStak">
+        <Card id="newStak">
             <div id="tierInfos">
-            <div className="tierInfo"><p>APY: {apyInfo ? apyInfo.apy : "select tier"}</p></div>
-                <div className="tierInfo"><p>LOCK UNTILL {apyInfo ? new Date(apyInfo.lockedUntil).toDateString() : "select tier"}</p></div>
-                <div className="tierInfo"><p>REWARD {calculatedReward ? calculatedReward : `Insert amount, cannot stake less than ${amountToStake}`}</p></div>
+            
+                <Card  className="tierInfo">
+                    <Card.Body>
+                        <Text>APY:<br/> {apyInfo ? apyInfo.apy : "select tier"}</Text>
+                    </Card.Body>
+                </Card>
+
+                <Card  className="tierInfo">
+                    <Card.Body>
+                        <Text>LOCK UNTILL <br/>{apyInfo ? new Date(apyInfo.lockedUntil).toDateString() : "select tier"}</Text>
+                    </Card.Body>
+                </Card>
+
+                <Card  className="tierInfo">
+                    <Card.Body>
+                        <Text>REWARD <br/> {calculatedReward ? calculatedReward : `Insert amount, cannot stake less than ${amountToStake}`}</Text>
+                    </Card.Body>
+                </Card>
             </div>
+            
             <div id="userSelect">
 
             <Dropdown color="secondary">
@@ -142,7 +163,7 @@ function CreateNewStaking({factoryAddress, userSigner}){
                     getAmountToDeposit(e.target.value)}}/>
                 <Button auto color="gradient" rounded bordered shadow onClick={() => deposit()}>DEPOSIT</Button>
             </div>
-        </div>
+        </Card>
     )
 }
 

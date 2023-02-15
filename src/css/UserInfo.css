@@ -21,7 +21,7 @@
     justify-content: space-around;
     width: 350px;
     height: 500px;
-    background-color:#223062;
+    background-color:#171717;
     border-radius: 30px;
     margin: 2%;
 }
@@ -30,8 +30,8 @@
     border-radius: 50%;
     width: 200px;
     height: 200px;
-    background: #03325f;
-    border: 3px solid #615ffb;
+    background: black;
+    border: 3px solid #15aeff;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -58,11 +58,11 @@
 .interaction{
     margin: 2%;
     height: 50%;    
-    background-color:#223062;
+    background-color:#171717;
     border-radius: 30px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
 }
 
@@ -92,7 +92,7 @@ button{
 
 p{
     font-family: 'Roboto', sans-serif;
-    color: #615ffb;
+    color: #1363eb;
 }
 
 

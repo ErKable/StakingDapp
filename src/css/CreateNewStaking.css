@@ -1,7 +1,6 @@
 #newStak{
     width: 50%;
     height: auto;
-    border: 2px solid #615ffb;
     border-radius: 30px;
 }
 
@@ -16,7 +15,6 @@
 }
 
 .tierInfo{
-    border: #615ffb 2px solid;
     width: 150px;
     height: 100px;
 }
