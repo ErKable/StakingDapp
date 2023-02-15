@@ -3,7 +3,7 @@ import "../css/loadingNumber.css";
 
 function LoadingNumber({n}){
 
-    const {number} = useSpring({
+    const {number} = useSpring({ // da vede, from usestate to call
         from: {number:0},
         number: n,
         delay: 1,

@@ -1,10 +1,10 @@
 import {Logo, Infos } from '../components';
 
-function StakedUserView(){
+function StakedUserView({userSigner, factoryAddress}){
     return(
         <>
         <Logo/>
-        <Infos/>
+        <Infos userSigner={userSigner} factoryAddress={factoryAddress}/>
         </>
     )
 }

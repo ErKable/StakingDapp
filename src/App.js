@@ -43,7 +43,7 @@ const darkTheme = createTheme({
 
 
 function App() {
-  //const [call, setCall] = useState(true)
+  const [call, setCall] = useState(true)
   const [userSigner, setUserSigner] = useState()
   const [connectedAccount, setConnectedAccount] = useState()
   const [connectedAddress, setConnectedAddress] = useState()
@@ -52,35 +52,43 @@ function App() {
   const tokenAddress = "0x21836a89de0D420a2251b8Cf2A40c393E80e0e1F"
   const factoryAddress = "0x81Eb97d54bF7Cc520bE5da7Add75b48eA2836c3e"
   const factoryAbi = require('./abi/stakingFactory.json')
-  
+ 
+  useEffect(() => {
+    setCall(false)
+   }, [])
+
+
   useEffect(() => { 
-    //if(call){   
-      getConnectedAccount()   
-        if(connectedAccount){   
-        console.log(connectedAccount)
+    //if(call){  
+      console.log("ma tu spammi merda?") 
+
+      getConnectedAccount()  
+      if(connectedAccount){
         getConnectedAddress()
-        if(connectedAddress && !userSigner){
-          console.log(connectedAddress)
-          //getSigner()
-        //setCall(false)
+        getSigner()
+        if(!userSigner){
+          setCall(!call)
         }
-      //}
-    }
-  })
+      } 
+    
+  },[call])
 
   useEffect(() => {
-    getStakingAddress()
-  })
+    if(userSigner){
+      getStakingAddress()
+    }
+    
+  }, [userSigner])
 
   function setView(){
     setAddress(!address)
   }
 
   function getConnectedAccount(){
-    if(!connectedAccount){
       let account = getAccount()
+      //console.log(account,"fdfdfdfd")
       setConnectedAccount(account)    
-    }  
+    
   }
   
   function getConnectedAddress(){
@@ -89,8 +97,8 @@ function App() {
   }
 
   async function getSigner(){
-    let signer = await fetchSigner()
-    console.log('signer',signer)
+    let signer = await fetchSigner(bscTestnet.id)
+    console.log("dioputtana", signer)
     setUserSigner(signer)
   }
 
@@ -100,7 +108,7 @@ function App() {
     console.log('Staking address', stakingAddress)
     setStakingAddress(stakingAddress)
   }
-
+  //console.log('signer',userSigner)
   if(stakingAddress){
 
   return (
@@ -110,7 +118,7 @@ function App() {
       <Web3Modal projectId={process.env.REACT_APP_WALLETCONNET_ID} ethereumClient={ethereumClient} />
         <div><ConnectButton /></div>
         <button onClick={() => setView()}>Change View</button>
-        <StakedUserView />
+        <StakedUserView userSigner={userSigner} factoryAddress={factoryAddress}/>
       </WagmiConfig>
 
       <Web3Modal

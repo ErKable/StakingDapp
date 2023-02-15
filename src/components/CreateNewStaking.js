@@ -15,6 +15,7 @@ function CreateNewStaking({factoryAddress, tokenAddress, userSigner}){
     const[selectedTier, setSelectedTier] = useState(0)
     const[apyInfo, setApyInfo] = useState()
     const[tiers, setTiers] = useState()
+    
     const tokenAbi = require('../abi/erc20Abu.json')
     const factoryAbi = require('../abi/stakingFactory.json')
     const RPC = "https://data-seed-prebsc-1-s3.binance.org:8545/";

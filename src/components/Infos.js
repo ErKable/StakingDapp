@@ -2,7 +2,7 @@ import "../css/Info.css"
 import LoadingNumber from "./LoadingNumber";
 import UserInfo from "./UserInfo";
 
-function Info(){
+function Info({userSigner, factoryAddress}){
 
     return(
         <>
@@ -17,7 +17,7 @@ function Info(){
             </div>
             </div>
 
-            <UserInfo />
+            <UserInfo userSigner={userSigner} factoryAddress={factoryAddress}/>
             
            {/*  <div className="infos">
                 <p>USER STAKING ADDRESS</p>
