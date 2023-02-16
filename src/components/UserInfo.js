@@ -5,38 +5,85 @@ import { Button, Input, Dropdown } from "@nextui-org/react";
 import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import CountUp from 'react-countup';
+import { getAccount } from '@wagmi/core'
+
 
 function UserInfo({userSigner, factoryAddress}){
 
+    const [address, setAddress] = useState()
+    const [is, setIs] = useState()
+    const [stakingAddress, setStakingAddress] = useState()
     const [amountToAdd, setAmountToAdd] = useState()
     const [pending, setPending] = useState()
     const factoryAbi = require("../abi/stakingFactory.json")
     const stakingAbi = require("../abi/stakingAbi.json")
-    function getAmountToAdd(amount) {
-        setAmountToAdd(amount)
-    }
-
-    async function deposit(){
-
-    }
-    async function getPenidingReward(){
-        const factory = new ethers.Contract(factoryAddress, factoryAbi, userSigner)
-        let stakingAdd = await factory.userStaking(await userSigner.getAddress())
-        const stack = new ethers.Contract(stakingAdd, stakingAbi, userSigner)
-        let pendingRewards = await stack.getPendingTokens()
-        console.log("Pending rewards", Number(ethers.utils.formatUnits(pendingRewards, 9)).toFixed(3))
-        setPending(Number(ethers.utils.formatUnits(pendingRewards, 9)).toFixed(3))
-    }
-
     
+    useEffect(() => {       
+        getAddress()
+        //getStakingAddress()
+        internalSigner()
+    }, [userSigner])
 
     useEffect(() => {
         const interval = setInterval(() => {
             getPenidingReward()
           
-        }, 10000);
+        }, 3000);
         return () => clearInterval(interval);
-      }, []);
+    }, [is]);
+    
+    function getAmountToAdd(amount) {
+        setAmountToAdd(amount)
+    }
+
+    async function getStakingAddress(){
+        
+    }
+
+    function internalSigner(){
+        setIs(userSigner)
+    }
+
+    async function getAddress(){
+        console.log('user info user signer', userSigner)
+        let address = await userSigner.getAddress()
+        console.log('userinfo address', address)
+        setAddress(address)
+    }
+
+    async function getStackData() {
+        //const stak = new ethers.Contract()
+    }
+
+
+    async function deposit(){
+
+    }
+    
+    async function getPenidingReward(){
+        console.log('pending reward signer', userSigner)
+        console.log('pending rewartd internal signer', is)
+        console.log('prima factory')
+        const factory = new ethers.Contract(factoryAddress, factoryAbi, is)
+        console.log('dopo facotyr')
+        let stakingAdd = await factory.userStaking(address)
+        console.log('stakingAdd', stakingAdd)
+        setStakingAddress(stakingAdd)
+        console.log('prima di stak')
+        if(stakingAdd){
+            const stack = new ethers.Contract(stakingAdd, stakingAbi, is)
+            console.log('dopo stak')
+            let pendingRewards = await stack.getPendingTokens()
+            console.log("Pending rewards", Number(ethers.utils.formatUnits(pendingRewards, 9)).toFixed(3))
+            setPending(Number(ethers.utils.formatUnits(pendingRewards, 9)).toFixed(3))
+        }
+    }
+
+    
+
+    
+
+    
 
     return(<>
         <div id="userInfoContainer">

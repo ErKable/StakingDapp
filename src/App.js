@@ -8,11 +8,11 @@ import { NextUIProvider } from '@nextui-org/react';
 import { createTheme } from "@nextui-org/react"
 import { ConnectButton} from './components';
 import { StakedUserView, NewUserView } from './views';
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef  } from "react"
 import { Web3Modal } from "@web3modal/react";
 import { configureChains, createClient, WagmiConfig } from "wagmi";
 import { getAccount, fetchSigner } from '@wagmi/core'
-import {bsc, bscTestnet} from "wagmi/chains";
+import { bsc, bscTestnet} from "wagmi/chains";
 import { ethers } from "ethers";
 
 const chains = [bscTestnet];
@@ -43,73 +43,60 @@ const darkTheme = createTheme({
 
 
 function App() {
-  const [call, setCall] = useState(true)
+
+
   const [userSigner, setUserSigner] = useState()
-  const [connectedAccount, setConnectedAccount] = useState()
   const [connectedAddress, setConnectedAddress] = useState()
   const [address, setAddress] = useState(true)
   const [stakingAddress, setStakingAddress] = useState()
   const tokenAddress = "0x21836a89de0D420a2251b8Cf2A40c393E80e0e1F"
   const factoryAddress = "0x81Eb97d54bF7Cc520bE5da7Add75b48eA2836c3e"
   const factoryAbi = require('./abi/stakingFactory.json')
- 
+
+
   useEffect(() => {
-    setCall(false)
-   }, [])
-
-
-  useEffect(() => { 
-    //if(call){  
-      console.log("ma tu spammi merda?") 
-
-      getConnectedAccount()  
-      if(connectedAccount){
-        getConnectedAddress()
-        getSigner()
-        if(!userSigner){
-          setCall(!call)
+        let tmout = async () => {
+          await new Promise(r => setTimeout(r, 2000));
         }
-      } 
-    
-  },[call])
+        let sig = () =>{
+          tmout().then(()=>{
+          let res = fetchSigner(bscTestnet.id).then((r)=>{
+            console.log(r,"DIOOO signer")
+            setUserSigner(r)
+            let accAdd = r.getAddress().then((ad)=>{
+              console.log("DIOOO adrs",ad)
+              setConnectedAddress(ad)
+            })
+          })
+        })
+        }
+        let rees = sig()
+    }, [])
 
-  useEffect(() => {
-    if(userSigner){
-      getStakingAddress()
-    }
-    
-  }, [userSigner])
+    useEffect(()=>{
+      if(connectedAddress){
+        getStakingAddress()
+      }
+      
 
-  function setView(){
-    setAddress(!address)
-  }
+    },[connectedAddress])
 
-  function getConnectedAccount(){
-      let account = getAccount()
-      //console.log(account,"fdfdfdfd")
-      setConnectedAccount(account)    
-    
-  }
+
   
-  function getConnectedAddress(){
-    let accAdd = connectedAccount.address
-    setConnectedAddress(accAdd)
-  }
 
-  async function getSigner(){
-    let signer = await fetchSigner(bscTestnet.id)
-    console.log("dioputtana", signer)
-    setUserSigner(signer)
-  }
 
   async function getStakingAddress(){
-    const factory = new ethers.Contract(factoryAddress, factoryAbi, userSigner)
-    let stakingAddress = await factory.userStaking(connectedAddress)
-    console.log('Staking address', stakingAddress)
+    if(connectedAddress != "undefined"){
+      console.log("quanno entro in call stack", userSigner,connectedAddress)
+      const factory = new ethers.Contract(factoryAddress, factoryAbi, userSigner)
+      let stakingAddress = await factory.userStaking(connectedAddress)
+      console.log('Staking address', stakingAddress)
     setStakingAddress(stakingAddress)
+    }else{return}
+    
   }
   //console.log('signer',userSigner)
-  if(stakingAddress){
+  if(stakingAddress != '0x0000000000000000000000000000000000000000'){
 
   return (
     <>
@@ -117,7 +104,7 @@ function App() {
       <WagmiConfig client={wagmiClient}>
       <Web3Modal projectId={process.env.REACT_APP_WALLETCONNET_ID} ethereumClient={ethereumClient} />
         <div><ConnectButton /></div>
-        <button onClick={() => setView()}>Change View</button>
+        
         <StakedUserView userSigner={userSigner} factoryAddress={factoryAddress}/>
       </WagmiConfig>
 
@@ -135,7 +122,7 @@ function App() {
         <WagmiConfig client={wagmiClient}>
         <Web3Modal projectId={process.env.REACT_APP_WALLETCONNET_ID} ethereumClient={ethereumClient} />
           <div><ConnectButton /></div>
-          <button onClick={() => setView()}>Change View</button>
+          
           <NewUserView factoryAddress={factoryAddress} tokenAddress={tokenAddress} userSigner={userSigner}/>
         </WagmiConfig>
   
