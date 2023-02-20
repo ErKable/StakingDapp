@@ -1,42 +1,12 @@
 import './App.css';
-import {
-  EthereumClient,
-  modalConnectors,
-  walletConnectProvider,
-} from "@web3modal/ethereum";
+import '@rainbow-me/rainbowkit/styles.css';
 import { NextUIProvider } from '@nextui-org/react';
 import { createTheme } from "@nextui-org/react"
-import { ConnectButton} from './components';
 import { StakedUserView, NewUserView } from './views';
-import { useState, useEffect, useRef  } from "react"
-import { Web3Modal } from "@web3modal/react";
-import { configureChains, createClient, WagmiConfig } from "wagmi";
-import { getAccount, fetchSigner } from '@wagmi/core'
-import { bsc, bscTestnet} from "wagmi/chains";
+import { useState, useEffect  } from "react"
+import { useAccount, useProvider, useSigner } from 'wagmi';
 import { ethers } from "ethers";
-
-const chains = [bscTestnet];
-
-// Wagmi client
-const { provider } = configureChains(chains, [
-  walletConnectProvider({ projectId: process.env.REACT_APP_WALLETCONNET_ID }),
-]);
-const wagmiClient = createClient({
-  autoConnect: true,
-  connectors: modalConnectors({
-    projectId: process.env.REACT_APP_WALLETCONNET_ID,
-    version: "1", // or "2"
-    appName: "srtaking",
-    chains,
-  }),
-  provider,
-});
-
-// Web3Modal Ethereum Client
-const ethereumClient = new EthereumClient(wagmiClient, chains);
-
-
-
+import { Particless } from './components';
 const darkTheme = createTheme({
   type: 'dark',  
 });
@@ -45,92 +15,86 @@ const darkTheme = createTheme({
 function App() {
 
 
-  const [userSigner, setUserSigner] = useState()
-  const [connectedAddress, setConnectedAddress] = useState()
-  const [address, setAddress] = useState(true)
+  const [priceToken, setPriceToken] = useState(0)
+  const [totLock, setTotLock] = useState()
+  const [tvl, setTvl] = useState()
+  const [triggerStakAdd, setTriggerStakAdd] = useState(true)
   const [stakingAddress, setStakingAddress] = useState()
-  const tokenAddress = "0x21836a89de0D420a2251b8Cf2A40c393E80e0e1F"
-  const factoryAddress = "0x81Eb97d54bF7Cc520bE5da7Add75b48eA2836c3e"
+  const tokenAddress = "0x3F4B6015682732CF8435ce1547378e9f06f79AAE"
+  const factoryAddress = "0xF531Bb513FbB8574A7CFD1651dD14d30A4193B4F"
   const factoryAbi = require('./abi/stakingFactory.json')
-
+  let addressZero = '0x0000000000000000000000000000000000000000'
+  //const { isConnected, address } = useAccount();
+  const provider = useProvider();
+  const { data: signer } = useSigner();
+  const [isInitialized, setInitialized] = useState(false);
+  const { isConnected, address } = useAccount();
 
   useEffect(() => {
-        let tmout = async () => {
-          await new Promise(r => setTimeout(r, 2000));
-        }
-        let sig = () =>{
-          tmout().then(()=>{
-          let res = fetchSigner(bscTestnet.id).then((r)=>{
-            console.log(r,"DIOOO signer")
-            setUserSigner(r)
-            let accAdd = r.getAddress().then((ad)=>{
-              console.log("DIOOO adrs",ad)
-              setConnectedAddress(ad)
-            })
-          })
-        })
-        }
-        let rees = sig()
-    }, [])
-
-    useEffect(()=>{
-      if(connectedAddress){
-        getStakingAddress()
-      }
-      
-
-    },[connectedAddress])
+    if (isConnected && signer) {
+      (async () => {
+        let stakz = await getStakingAddress(signer)
+        setStakingAddress(stakz)
+        setInitialized(true);
+        
+      })();
+    }else{
+      console.log("disconnected",signer)
+      setStakingAddress(addressZero)
+    }
+  }, [isConnected, signer,isInitialized, triggerStakAdd]);
 
 
+  function triggerStak(){
+
+    setTriggerStakAdd(!triggerStak)
+  }
+
+  function fixDecimals( number, decimals ){
+    number = number.toString();
+    let numberAbs = number.split('.')[0]
+    let numberDecimals = number.split('.')[1] ? number.split('.')[1] : '';
+    while( numberDecimals.length < decimals ){
+        numberDecimals += "0";
+    }
+    return numberAbs + numberDecimals;
+}
   
 
 
-  async function getStakingAddress(){
-    if(connectedAddress != "undefined"){
-      console.log("quanno entro in call stack", userSigner,connectedAddress)
-      const factory = new ethers.Contract(factoryAddress, factoryAbi, userSigner)
-      let stakingAddress = await factory.userStaking(connectedAddress)
-      console.log('Staking address', stakingAddress)
-    setStakingAddress(stakingAddress)
-    }else{return}
-    
+  async function getStakingAddress(sig){
+      const factory = new ethers.Contract(factoryAddress, factoryAbi, sig)
+      let stakingAddress = await factory.userStaking(address)
+      let totLocked = await factory.totalUserStaked()
+      setTotLock(ethers.utils.formatUnits(totLocked,9))
+    return stakingAddress    
   }
-  //console.log('signer',userSigner)
-  if(stakingAddress != '0x0000000000000000000000000000000000000000'){
+
+  if(stakingAddress && stakingAddress != addressZero){
 
   return (
     <>
-    <NextUIProvider theme={darkTheme}>
-      <WagmiConfig client={wagmiClient}>
-      <Web3Modal projectId={process.env.REACT_APP_WALLETCONNET_ID} ethereumClient={ethereumClient} />
-        <div><ConnectButton /></div>
-        
-        <StakedUserView userSigner={userSigner} factoryAddress={factoryAddress}/>
-      </WagmiConfig>
 
-      <Web3Modal
-        projectId={process.env.REACT_APP_WALLETCONNET_ID}
-        ethereumClient={ethereumClient}
-      />
+    <NextUIProvider theme={darkTheme}>
+          <Particless />
+        <StakedUserView userSigner={signer} userAddress={address} factoryAddress={factoryAddress}/>
+    
     </NextUIProvider>
+    
     </>
   );
-  } else {
+  } else if(!isConnected || stakingAddress == addressZero) {
+    console.log(isConnected,"____",stakingAddress)
     return (
       <>
+
       <NextUIProvider theme={darkTheme}>
-        <WagmiConfig client={wagmiClient}>
-        <Web3Modal projectId={process.env.REACT_APP_WALLETCONNET_ID} ethereumClient={ethereumClient} />
-          <div><ConnectButton /></div>
-          
-          <NewUserView factoryAddress={factoryAddress} tokenAddress={tokenAddress} userSigner={userSigner}/>
-        </WagmiConfig>
-  
-        <Web3Modal
-          projectId={process.env.REACT_APP_WALLETCONNET_ID}
-          ethereumClient={ethereumClient}
-        />
+      <Particless />
+          <NewUserView factoryAddress={factoryAddress} tokenAddress={tokenAddress} userSigner={signer} trigger={triggerStak}/>
+        
+      
       </NextUIProvider>
+      
       </>
       )
   }

@@ -4,6 +4,7 @@
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
+    
 }
 
 /* #userInfoContainer > div{
@@ -23,7 +24,7 @@
     height: 500px;
     background-color:#171717;
     border-radius: 30px;
-    margin: 2%;
+    margin: 0.5%;
 }
 
 #circle{
@@ -47,7 +48,7 @@
 }
 
 
-#buttonContainer{
+#buttons{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -77,7 +78,7 @@ input{
     margin: 2%;
 }
 
-button{
+/* button{
     border:#615ffb solid 2px;
     border-radius: 15px;
     height: 30px;
@@ -88,7 +89,7 @@ button{
     font-family: 'Roboto', sans-serif;
     color: #615ffb;
 }
-
+ */
 
 p{
     font-family: 'Roboto', sans-serif;

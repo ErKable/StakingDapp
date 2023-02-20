@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import "../css/Countdown.css";
 function Countdown({UNIX_timestamp}) {
-  const [timerDays, setTimerDays] = useState("00");
-  const [timerHours, setTimerHours] = useState("00");
-  const [timerMinutes, setTimerMinutes] = useState("00");
-  const [timerSeconds, setTimerSeconds] = useState("00");
+  const [timerDays, setTimerDays] = useState("0");
+  const [timerHours, setTimerHours] = useState("0");
+  const [timerMinutes, setTimerMinutes] = useState("0");
+  const [timerSeconds, setTimerSeconds] = useState("0");
 
   let interval = useRef();
 
@@ -44,23 +44,19 @@ function Countdown({UNIX_timestamp}) {
         
         <div id="countdown">
           <div className="decreasing">
-            <p>D</p>
-            <p>{timerDays}</p>
+            <p>Day {isNaN(timerDays) ? 0 : timerDays}</p>
           </div>
          
           <div className="decreasing">
-            <p>H</p>
-            <p>{timerHours}</p>
+            <p>Hour {isNaN(timerHours) ? 0 : timerHours}</p>
           </div>
           
           <div className="decreasing">
-            <p>M</p>
-            <p>{timerMinutes}</p>
+            <p>Minutes {isNaN(timerMinutes) ? 0 : timerMinutes}</p>
           </div>
           
           <div className="decreasing">
-            <p>S</p>
-            <p>{timerSeconds}</p>
+            <p>Seconds {isNaN(timerSeconds) ? 0 : timerSeconds}</p>
           </div>
         </div>
       </section>

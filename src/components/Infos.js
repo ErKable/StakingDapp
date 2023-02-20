@@ -6,16 +6,7 @@ function Info({userSigner, factoryAddress}){
 
     return(
         <>
-            <div id="infoContainer">  
-                <div className="infos">
-                    <p>MINIMUM AMOUNT TO STAKE</p>
-                    <LoadingNumber n={3500000000} />
-                </div>
-
-            <div className="infos">
-                <p>TOTAL USER STAKED</p>
-            </div>
-            </div>
+  
 
             <UserInfo userSigner={userSigner} factoryAddress={factoryAddress}/>
             

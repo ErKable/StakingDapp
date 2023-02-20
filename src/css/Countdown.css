@@ -17,12 +17,13 @@
 #countdown{
     display: flex;
     flex-direction: row;
+    align-items: center;
     justify-content: space-around;
 
 }
 
 .decreasing{
-    margin: 10%;
+    margin: 5%;
 }
 
 .decreasing > p {    

@@ -1,6 +1,6 @@
-body{
+/* body{
   background-color: #000000 !important;
-}
+} */
 
 body::-webkit-scrollbar {
   display: none;
@@ -41,6 +41,7 @@ body {
 .App-link {
   color: #61dafb;
 }
+
 
 @keyframes App-logo-spin {
   from {
