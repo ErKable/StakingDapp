@@ -24,7 +24,7 @@ import {
 } from '@rainbow-me/rainbowkit/wallets';
 const { chains, provider } = configureChains(
   [bscTestnet],
-  [alchemyProvider({ apiKey: '6mDnh0_FqrDQzdcOCI_O5NkDs70x4VYp' }), publicProvider()]
+  [alchemyProvider({ apiKey: proces.env.REACT_APP_ALCHEMY_KEY }), publicProvider()]
 );
 
 const connectors = connectorsForWallets([
