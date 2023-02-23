@@ -1,7 +1,7 @@
 import React from "react";
 import { Navbar, Button, Link, Text, Card, Spacer, Radio, useTheme, } from "@nextui-org/react";
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-
+import '@rainbow-me/rainbowkit/styles.css';
 
 export default function App() {
   const [variant, setVariant] = React.useState("default");

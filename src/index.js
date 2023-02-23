@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
 import { bsc, bscTestnet} from "wagmi/chains";
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { RainbowKitProvider, connectorsForWallets } from '@rainbow-me/rainbowkit';
@@ -24,7 +23,7 @@ import {
 } from '@rainbow-me/rainbowkit/wallets';
 const { chains, provider } = configureChains(
   [bscTestnet],
-  [alchemyProvider({ apiKey: proces.env.REACT_APP_ALCHEMY_KEY }), publicProvider()]
+  [alchemyProvider({ apiKey: '6mDnh0_FqrDQzdcOCI_O5NkDs70x4VYp' }), publicProvider()]
 );
 
 const connectors = connectorsForWallets([
